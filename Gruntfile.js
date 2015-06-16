@@ -127,6 +127,37 @@
           dest: 'css/*.css'
         }
       },
+      
+      combine_mq: {
+        new_filename: {
+          options: {
+            beautify: true
+          },
+          src: 'css/**/*.css',
+          dest: 'css/mediaqueries.css'
+        }
+      },
+      
+      csso: {
+        dynamic_mappings: {
+          expand: true,
+          cwd: '/css/',
+          src: ['**/*.css', '!**/*.min.css'],
+          dest: '/css/',
+          ext: '.min.css'
+        }
+      },
+      
+      cssshrink: {
+        options: {
+          log: true
+        },
+        main: {
+          files: {
+            'css': ['**/*.css']
+          }
+        }
+      },
 
       // UNCSS will analyzes the your HTML pages and
       // remove from the CSS all the classes that are
