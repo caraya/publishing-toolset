@@ -30,21 +30,6 @@
         }
       },
 
-      // Takes all the files under js/ and concatenates
-      // them together. I've chosen not to mangle the compressed file
-      uglify: {
-        dist: {
-          options: {
-            mangle: false,
-            sourceMap: true,
-            sourceMapName: 'css/script.min.map'
-          },
-          files: {
-            'js/script.min.js': [ 'js/video.js', 'lib/highlight.pack.js']
-          }
-        }
-      },
-
       // SASS RELATED TASKS
       // Converts all the files under scss/ ending with .scss
       // into the equivalent css file on the css/ directory
@@ -68,7 +53,7 @@
           files: [ {
             expand: true,
             cwd: 'sass',
-            src: [ '*.scss'],
+            src: [ '**/*.scss'],
             dest: 'css',
             ext: '.css'
           }]
@@ -82,27 +67,10 @@
       //
       // I've chosen not to fail on errors or warnings.
       scsslint: {
-        allFiles: [
-          'scss/*.scss',
-          'scss/modules/_mixins.scss',
-          'scss/modules/_variables.scss',
-          'scss/partials/*.scss'],
+        allFiles: [ 'scss/**/*.scss' ],
         options: {
           force: true,
           colorizeOutput: true
-        }
-      },
-
-      perfbudget: {
-        all: {
-          options: {
-            url: 'https://caraya.github.io/books-as-apps/typography.html',
-            key: 'A.be974c9b235f69677db80813612925c6',
-            budget: {
-              visualComplete: '4000',
-              SpeedIndex: '1500'
-            }
-          }
         }
       },
 
@@ -175,135 +143,7 @@
             'dist/css/main.css': [ 'dist/*.html' ]
           }
         }
-      },
-
-      // COFFEESCRIPT
-      // If you want to use coffeescript (http://coffeescript.org/)
-      // instead of vanilla JS, uncoment the block below and change
-      // the cwd value to the locations of your coffee files
-      coffee: {
-        files: {
-          expand: true,
-          flatten: true,
-          cwd: 'coffee',
-          src: ['*.coffee'],
-          dest: 'js/',
-          ext: '.js'
-        }
-      },
-
-      // BABEL
-      // Babel allows you to transpile ES6 to current ES5 without needing
-      // a plugin or anything installed in your application. This will
-      // eventually go away when I'm happy with ES6 support in browsers
-      // See http://babeljs.io/ for more information.
-      babel: {
-        options: {
-          sourceMap: true
-        },
-        dist: {
-          files: {
-            'es6/*.js': 'src/*.js'
-          }
-        }
-      },
-
-      // GH-PAGES TASK
-      // Push the specified content into the repositories
-      // gh-pages branch
-      'gh-pages': {
-        options: {
-          message: 'Content committed from Grunt gh-pages',
-          base: 'dist/',
-          dotfiles: true
-        },
-        // These files will get pushed to the `
-        // gh-pages` branch (the default)
-        src: ['**/*']
-      },
-
-      // FILE MANAGEMENT
-      // Can't seem to make the copy task create the directory
-      // if it doesn't exist so we go to another task to create
-      // the fn directory
-      mkdir: {
-        build: {
-          options: {
-            create: [ 'dist' ]
-          }
-        }
-      },
-
-      // Copy the files from our repository into the dist
-      // directory. Do not do deep copy of HTML files.
-      // It'll copy stuff that we keep around for testing,
-      // like the webfont loader docs. Either delete the
-      // webfont loader stuff or just copy html from the
-      // top level directory (which I changed it to do)
-      copy: {
-        dist: {
-          files: [ {
-            expand: true,
-            src: [
-              'fonts/**/*',
-              'css/**/*',
-              'lib/**/*',
-              'js/**/*',
-              '*.html'],
-            dest: 'dist/'
-          }]
-        }
-      },
-
-      // Clean the build directory
-      clean: {
-        all: [ 'dist/' ]
-      },
-
-      // WATCH TASK
-      // Watch for changes on the js and scss files and
-      // perform the specified task
-      watch: {
-        options: {
-          livereload: true
-        },
-        // Watch all javascript files and hint them
-        js: {
-          files: [ 'Gruntfile.js', 'js/{,*/}*.js'],
-          tasks: [ 'jshint'],
-          options: {
-            livereload: true
-          }
-        },
-        sass: {
-          files: [ 'sass/*.scss'],
-          tasks: [ 'sass:dev', 'autoprefixer'],
-          options: {
-            livereload: true
-          }
-        }
-      },
-
-      connect: {
-        draft: {
-          options: {
-            base: '.',
-            port: 2509,
-            keepalive: true,
-            livereload: true
-
-          }
-        }
-      },
-
-      // grunt-open will open your browser at the project's URL
-      open: {
-        all: {
-          // Gets the port from the connect configuration
-          path: 'http://0.0.0.0:2509'
-        }
       }
-
     });
     // closes initConfig
 
@@ -311,33 +151,20 @@
     // Usually a combination of one or more tasks defined above
 
     grunt.task.registerTask(
-      'local-server',
-      [ 'connect', 'open' ]
-    );
-
-    grunt.task.registerTask(
       'lint',
-      [ 'jshint' ]
+      [ 'scsslint']
     );
 
+    // Prep CSS starting with linting SASS, converting SASS to CSS and processing the 
+    // CSS with autoprefixer
     grunt.task.registerTask(
-      'publish',
-      [ 'clean:all', 'copy:dist', 'imagemin', 'gh-pages' ]
-    );
-    grunt.task.registerTask(
-      'lint-all',
-      [ 'scsslint', 'jshint']
-    );
-
-    // Prep CSS starting with SASS, autoprefix et. al
-    grunt.task.registerTask(
-      'prep-css',
+      'prep-scss',
       [ 'scsslint', 'sass:dev', 'autoprefixer' ]
     );
-
+    
     grunt.task.registerTask(
-      'prep-js',
-      [ 'jshint', 'uglify' ]
+      'process-css',
+      [   ]
     );
 
   };
